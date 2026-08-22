@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import kotlin.math.abs
+import kotlin.math.roundToInt
 
 /**
  * Diagnostic screen retained from the porting phase.
@@ -30,6 +31,7 @@ class SelfTestFragment : Fragment() {
     private var _binding: FragmentSelfTestBinding? = null
     private val binding get() = _binding!!
     private var engine: PadInferenceEngine? = null
+    private var technicalExpanded = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -42,6 +44,21 @@ class SelfTestFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.statusText.text = getString(R.string.status_idle)
         binding.runButton.setOnClickListener { run() }
+        binding.technicalToggle.setOnClickListener { toggleTechnical() }
+    }
+
+    /**
+     * Pixel-parity statistics matter when validating the port, but mean nothing
+     * to a study participant, so they start collapsed.
+     */
+    private fun toggleTechnical() {
+        technicalExpanded = !technicalExpanded
+        binding.technicalText.visibility =
+            if (technicalExpanded) View.VISIBLE else View.GONE
+        binding.technicalToggle.setText(
+            if (technicalExpanded) R.string.btn_hide_technical
+            else R.string.btn_show_technical
+        )
     }
 
     override fun onDestroyView() {
@@ -54,28 +71,39 @@ class SelfTestFragment : Fragment() {
     private fun run() {
         binding.runButton.isEnabled = false
         binding.statusText.text = "Running self-test…"
+        binding.technicalToggle.visibility = View.GONE
+        binding.technicalText.visibility = View.GONE
+        technicalExpanded = false
+        binding.technicalToggle.setText(R.string.btn_show_technical)
+
         viewLifecycleOwner.lifecycleScope.launch {
-            val report = withContext(Dispatchers.Default) { selfTest() }
+            val (summary, technical) = withContext(Dispatchers.Default) { selfTest() }
             if (!isAdded || _binding == null) return@launch
-            binding.statusText.text = report
+            binding.statusText.text = summary
+            binding.technicalText.text = technical
+            binding.technicalToggle.visibility =
+                if (technical.isBlank()) View.GONE else View.VISIBLE
             binding.runButton.isEnabled = true
         }
     }
 
-    private fun selfTest(): String = buildString {
+    /** @return `summary` for everyone, `technical` for the collapsed section. */
+    private fun selfTest(): Pair<String, String> {
+        val summary = StringBuilder()
+        val technical = StringBuilder()
         val started = System.currentTimeMillis()
         try {
             val eng = engine
                 ?: PadInferenceEngine(requireContext()).also { engine = it }
-            appendLine("model : ${PadInferenceEngine.MODEL_ASSET}")
+            technical.appendLine("model : ${PadInferenceEngine.MODEL_ASSET}")
 
             val assets = requireContext().assets
             val meta = JSONObject(
                 assets.open("selftest.json").bufferedReader().use { it.readText() }
             )
             val samples = meta.getJSONArray("samples")
-            appendLine("cases : ${samples.length()}")
-            appendLine()
+            technical.appendLine("cases : ${samples.length()}")
+            technical.appendLine()
 
             var worstPixelDiff = 0
             var worstScoreDiff = 0.0
@@ -113,11 +141,21 @@ class SelfTestFragment : Fragment() {
                     abs(scoreOnOurs - expectedScore.toFloat()).toDouble()
                 )
 
-                appendLine("[${s.getString("label")}]  ${s.getString("source")}")
-                appendLine("  expected score      : %.6f".format(expectedScore))
-                appendLine("  score (python prep) : %.6f".format(scoreOnReference))
-                appendLine("  score (kotlin prep) : %.6f".format(scoreOnOurs))
-                appendLine(
+                val friendly = if (s.getString("label").startsWith("genuine"))
+                    "Genuine test fingerprint" else "Altered (fake) test fingerprint"
+                summary.appendLine(friendly)
+                summary.appendLine("  Detected as: " +
+                    (if (scoreOnOurs >= PadInferenceEngine.DEFAULT_THRESHOLD)
+                        "real finger" else "fake finger"))
+                summary.appendLine("  Confidence : %d%%".format(
+                    (scoreOnOurs * 100f).roundToInt()))
+                summary.appendLine()
+
+                technical.appendLine("[${s.getString("label")}]  ${s.getString("source")}")
+                technical.appendLine("  expected score      : %.6f".format(expectedScore))
+                technical.appendLine("  score (python prep) : %.6f".format(scoreOnReference))
+                technical.appendLine("  score (kotlin prep) : %.6f".format(scoreOnOurs))
+                technical.appendLine(
                     "  pixel diff vs opencv: max=%d  differing=%d/%d (%.2f%%)  mean=%.3f"
                         .format(
                             maxDiff, diffCount, ourPlane.size,
@@ -125,15 +163,16 @@ class SelfTestFragment : Fragment() {
                             sumDiff.toDouble() / ourPlane.size,
                         )
                 )
-                appendLine()
+                technical.appendLine()
             }
 
-            appendLine("─".repeat(34))
-            appendLine("worst pixel delta : $worstPixelDiff / 255")
-            appendLine("worst score delta : %.6f".format(worstScoreDiff))
-            appendLine("elapsed           : ${System.currentTimeMillis() - started} ms")
-            appendLine()
-            appendLine(
+            technical.appendLine("─".repeat(34))
+            technical.appendLine("worst pixel delta : $worstPixelDiff / 255")
+            technical.appendLine("worst score delta : %.6f".format(worstScoreDiff))
+            technical.appendLine(
+                "elapsed           : ${System.currentTimeMillis() - started} ms")
+            technical.appendLine()
+            technical.append(
                 if (worstScoreDiff < 0.01) {
                     "PASS — preprocessing and model agree with the training pipeline."
                 } else {
@@ -141,9 +180,20 @@ class SelfTestFragment : Fragment() {
                         "CLAHE/bicubic match OpenCV, or switch to OpenCV for Android."
                 }
             )
+
+            summary.append(
+                if (worstScoreDiff < 0.01) {
+                    "The fake-finger detector is working correctly on this phone."
+                } else {
+                    "Something looks wrong — the detector does not match the " +
+                        "reference results. Tap Show technical details."
+                }
+            )
         } catch (t: Throwable) {
-            appendLine("FAILED: ${t::class.java.simpleName}: ${t.message}")
+            summary.append("The self-test could not run on this phone.")
+            technical.append("FAILED: ${t::class.java.simpleName}: ${t.message}")
         }
+        return summary.toString().trim() to technical.toString().trim()
     }
 
     private fun grayToBitmap(raw: ByteArray, w: Int, h: Int): Bitmap {

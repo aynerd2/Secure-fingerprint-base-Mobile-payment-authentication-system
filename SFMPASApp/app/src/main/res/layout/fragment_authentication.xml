@@ -12,6 +12,22 @@
         android:orientation="vertical"
         android:padding="20dp">
 
+        <!-- Offline banner. Shown only once a backend call has actually failed,
+             so the app never claims to be offline on a guess. -->
+        <TextView
+            android:id="@+id/offlineBanner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:background="@color/warn_amber_dim"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="10dp"
+            android:text="@string/offline_banner"
+            android:textAppearance="?attr/textAppearanceBodySmall"
+            android:textColor="@color/warn_amber"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
         <!-- Transaction summary -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
@@ -97,10 +113,9 @@
                         android:id="@+id/scoreText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="monospace"
                         android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="13sp"
-                        tools:text="liveness score 0.999578" />
+                        android:textSize="12sp"
+                        tools:text="Confidence: 100%" />
 
                     <TextView
                         android:id="@+id/enforcementText"

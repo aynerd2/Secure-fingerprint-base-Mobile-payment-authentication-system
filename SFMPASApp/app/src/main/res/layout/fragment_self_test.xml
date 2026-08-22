@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -18,11 +19,40 @@
         android:layout_marginTop="14dp"
         android:layout_weight="1">
 
-        <TextView
-            android:id="@+id/statusText"
-            style="@style/Widget.SFMPAS.Console"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Plain-language result, always visible. -->
+            <TextView
+                android:id="@+id/statusText"
+                style="@style/Widget.SFMPAS.Console"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <!-- Pixel-parity statistics are meaningless to a study participant,
+                 so they start collapsed behind this toggle. -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/technicalToggle"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/btn_show_technical"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/technicalText"
+                style="@style/Widget.SFMPAS.Console"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:visibility="gone"
+                tools:visibility="visible"
+                tools:text="worst pixel delta : 3 / 255" />
+        </LinearLayout>
     </ScrollView>
 
     <com.google.android.material.button.MaterialButton

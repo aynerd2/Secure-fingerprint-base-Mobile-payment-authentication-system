@@ -330,7 +330,7 @@ key, which is required after a device re-enrols biometrics.
   "user_id": "sfmpas-a1b2c3d4e5f6",
   "username": "Ayobami Ogunlade",
   "occupation": "GENERAL_USER",
-  "registered_at": "2025-08-22T07:14:03.221Z",
+  "registered_at": "2026-08-22T07:14:03.221Z",
   "key_algorithm": "EC secp256r1 / SHA256withECDSA",
   "replaced_existing": false
 }
@@ -355,7 +355,7 @@ Resolves the KYC tier from the amount and issues a single-use challenge. Call th
   "requirement": "Fingerprint + liveness check",
   "requires_liveness": true,
   "requires_enhanced": false,
-  "expires_at": "2025-08-22T07:19:03.400Z",
+  "expires_at": "2026-08-22T07:19:03.400Z",
   "signing_algorithm": "SHA256withECDSA"
 }
 ```
@@ -387,7 +387,7 @@ trail.
   "recipient": "Adaeze Okafor",
   "tier": "TIER_2",
   "liveness_score": 0.999578,
-  "created_at": "2025-08-22T07:15:11.902Z",
+  "created_at": "2026-08-22T07:15:11.902Z",
   "receipt": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
 
@@ -416,11 +416,11 @@ curl "https://sfmpas-backend.onrender.com/transactions?user_id=sfmpas-a1b2c3d4e5
   "transactions": [
     { "transaction_id": "3c8e1d90-…", "amount_naira": 75000,
       "recipient": "Adaeze Okafor", "tier": "TIER_2", "liveness_score": 0.999578,
-      "verdict": "APPROVED", "reason": null, "created_at": "2025-08-22T07:15:11.902Z" },
+      "verdict": "APPROVED", "reason": null, "created_at": "2026-08-22T07:15:11.902Z" },
     { "transaction_id": "b7a2f014-…", "amount_naira": 210000,
       "recipient": "Tayo", "tier": "TIER_3", "liveness_score": 0.000016,
       "verdict": "REJECTED", "reason": "presentation attack detected (liveness 0.0000 < 0.50)",
-      "created_at": "2025-08-22T07:02:44.118Z" }
+      "created_at": "2026-08-22T07:02:44.118Z" }
   ]
 }
 ```
@@ -458,7 +458,7 @@ If you use this work, please cite the dissertation:
   title   = {{SFMPAS}: A Secure Fingerprint Multi-factor Payment Authentication
              System with On-Device Presentation Attack Detection},
   school  = {MSc Dissertation},
-  year    = {2025},
+  year    = {2026},
   note    = {\url{https://github.com/<your-username>/sfmpas}}
 }
 ```
@@ -483,7 +483,7 @@ attack detection — Part 3: Testing and reporting*.
 ## License
 
 Released under the **MIT License** — see [LICENSE](LICENSE).
-Copyright (c) 2025 Ayobami Ogunlade.
+Copyright (c) 2026 Ayobami Ogunlade.
 
 SOCOFing is distributed under its own terms by its authors and is not covered by this
 licence. The MIT grant covers the SFMPAS source, the trained model weights, and the

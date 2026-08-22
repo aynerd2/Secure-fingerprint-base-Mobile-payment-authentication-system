@@ -27,6 +27,7 @@
     <color name="attack_red">#EF5350</color>
     <color name="attack_red_dim">#43201F</color>
     <color name="warn_amber">#FFB74D</color>
+    <color name="warn_amber_dim">#3A2C14</color>
 
     <color name="ic_launcher_background">#0B3D5C</color>
 </resources>

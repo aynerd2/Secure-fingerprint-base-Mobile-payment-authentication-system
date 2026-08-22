@@ -48,16 +48,47 @@
     <string name="tier_prompt">Enter an amount to see which CBN KYC tier applies.</string>
 
     <!-- Authentication -->
-    <string name="auth_step_liveness">1 · Presentation attack detection</string>
+    <string name="auth_step_liveness">Step 1: Fake Finger Check</string>
     <string name="auth_step_fingerprint">2 · Fingerprint verification</string>
     <string name="auth_step_enhanced">3 · Enhanced verification</string>
     <string name="btn_authorise">Authorise Payment</string>
     <string name="btn_done">Done</string>
     <string name="btn_retry">Try Again</string>
-    <string name="simulate_attack">Simulate presentation attack</string>
+    <string name="simulate_attack">Demo mode: simulate fake finger</string>
     <string name="simulate_attack_help">Feeds the altered (Z-cut) reference print instead of the genuine one, so the rejection path can be demonstrated.</string>
 
+    <!-- Friendly liveness verdicts (see AuthenticationFragment) -->
+    <string name="liveness_real_confirmed">Real finger confirmed</string>
+    <string name="liveness_passed">Liveness check passed</string>
+    <string name="liveness_fake">Fake finger detected</string>
+    <string name="confidence_fmt">Confidence: %1$d%%</string>
+    <string name="signed_verified">Payment digitally signed and verified</string>
+
+    <!-- Plain-language step log -->
+    <string name="log_liveness_pass">Fake finger check — Passed</string>
+    <string name="log_liveness_fail">Fake finger detected — Payment blocked</string>
+    <string name="log_fingerprint_pass">Fingerprint matched — Passed</string>
+    <string name="log_fingerprint_fail">Fingerprint did not match</string>
+    <string name="log_enhanced_pass">Extra security check — Passed</string>
+    <string name="log_verdict_approved">Payment approved</string>
+    <string name="log_verdict_blocked">Payment blocked</string>
+    <string name="log_sample_genuine">Using a genuine test fingerprint</string>
+    <string name="log_sample_altered">Using an altered (fake) test fingerprint</string>
+    <string name="log_contacting">Contacting payment server…</string>
+    <string name="log_session_started">Secure session started</string>
+    <string name="log_server_offline">Payment server unavailable — continuing offline</string>
+    <string name="log_sending">Sending to payment server…</string>
+    <string name="log_server_confirmed">Payment server confirmed</string>
+    <string name="log_server_declined">Payment server declined — %1$s</string>
+    <string name="log_server_unreachable">Payment server unreachable — approved on this device</string>
+    <string name="log_not_enforced">(not required at %1$s)</string>
+
+    <!-- Self-test collapsible -->
+    <string name="btn_show_technical">Show technical details</string>
+    <string name="btn_hide_technical">Hide technical details</string>
+
     <string name="print_preview_desc">Captured fingerprint used for the liveness check</string>
+    <string name="offline_banner">⚠  Server unavailable, running in offline mode</string>
     <string name="liveness_running">Running presentation attack detection…</string>
     <string name="enforced_at">Enforced at %1$s</string>
     <string name="not_enforced_tier1">Informational at Tier 1 — not enforced</string>

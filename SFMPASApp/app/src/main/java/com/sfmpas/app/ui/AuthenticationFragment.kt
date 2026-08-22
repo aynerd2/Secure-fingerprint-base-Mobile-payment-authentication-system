@@ -2,6 +2,7 @@ package com.sfmpas.app.ui
 
 import android.graphics.Bitmap
 import android.util.Base64
+import android.util.Log
 import android.os.Bundle
 import android.security.keystore.KeyPermanentlyInvalidatedException
 import android.view.LayoutInflater
@@ -37,6 +38,7 @@ import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.security.Signature
 import java.util.UUID
+import kotlin.math.roundToInt
 
 /**
  * Screen 4 — step-up authentication.
@@ -69,6 +71,13 @@ class AuthenticationFragment : Fragment() {
     private var amountNaira: Long = 0L
     private lateinit var recipient: String
     private lateinit var tier: KycTier
+
+    private companion object {
+        const val TAG = "SFMPAS/Auth"
+    }
+
+    /** At or above this the wording strengthens; the accept cut-off stays 0.5. */
+    private val HIGH_CONFIDENCE = 0.90f
 
     private var livenessJob: Job? = null
     private var backendOnline = false
@@ -191,23 +200,36 @@ class AuthenticationFragment : Fragment() {
         livenessScore = score
         livenessPassed = score >= PadInferenceEngine.DEFAULT_THRESHOLD
 
+        // Participants read a plain-language verdict; the number stays, but
+        // smaller and underneath, expressed as a percentage rather than a raw
+        // model output. HIGH_CONFIDENCE only changes the wording — the accept
+        // decision is still the 0.5 threshold the model was evaluated at.
         binding.verdictText.text = getString(
-            if (livenessPassed) R.string.verdict_genuine else R.string.verdict_attack
+            when {
+                score >= HIGH_CONFIDENCE -> R.string.liveness_real_confirmed
+                livenessPassed -> R.string.liveness_passed
+                else -> R.string.liveness_fake
+            }
         )
         binding.verdictText.setTextColor(
             colour(if (livenessPassed) R.color.genuine_green else R.color.attack_red)
         )
-        binding.scoreText.text = "liveness score %.6f".format(score)
+        binding.scoreText.text =
+            getString(R.string.confidence_fmt, (score * 100f).roundToInt())
 
         binding.logText.visibility = View.VISIBLE
         binding.logText.text = buildString {
-            appendLine("sample     : $source")
-            appendLine("threshold  : ${PadInferenceEngine.DEFAULT_THRESHOLD}")
-            appendLine("score      : %.6f".format(score))
-            append("1 · liveness : ")
-            append(if (livenessPassed) "PASS" else "FAIL")
+            appendLine(getString(
+                if (source.contains("Zcut", ignoreCase = true)) R.string.log_sample_altered
+                else R.string.log_sample_genuine
+            ))
+            append(getString(
+                if (livenessPassed) R.string.log_liveness_pass
+                else R.string.log_liveness_fail
+            ))
             if (!livenessPassed && !tier.requiresLiveness) {
-                append("  (not enforced at ${tier.displayName})")
+                append("  ")
+                append(getString(R.string.log_not_enforced, tier.displayName))
             }
         }
 
@@ -256,7 +278,7 @@ class AuthenticationFragment : Fragment() {
 
         binding.primaryButton.isEnabled = false
         binding.livenessProgress.visibility = View.VISIBLE
-        appendLog("2 - requesting challenge from backend...")
+        appendLog(getString(R.string.log_contacting))
 
         viewLifecycleOwner.lifecycleScope.launch {
             val outcome = withContext(Dispatchers.IO) {
@@ -291,21 +313,24 @@ class AuthenticationFragment : Fragment() {
                 backendOnline = true
                 serverChallenge = begin.challenge
                 serverChallengeId = begin.challengeId
-                appendLog("   challenge     : " + begin.challengeId.take(8) +
-                    " (" + begin.tier + ")")
+                appendLog(getString(R.string.log_session_started))
                 if (begin.tier != tier.name) {
                     // The server is authoritative on tiering; surface any drift
                     // rather than silently using the device's opinion.
-                    appendLog("   NOTE: server tier " + begin.tier +
+                    // Kept technical: a tier disagreement is a defect worth
+                    // seeing, not something to soften for a participant.
+                    appendLog("NOTE: server tier " + begin.tier +
                         " != device " + tier.name)
                 }
             }.onFailure { error ->
                 backendOnline = false
                 serverChallenge = null
                 serverChallengeId = null
-                appendLog("   backend       : offline (" +
-                    describeNetworkError(error) + ")")
-                appendLog("   falling back to a device-local challenge")
+                setOfflineBanner(true)
+                // Participants get plain language; the actual cause goes to
+                // logcat so it is still recoverable when debugging a session.
+                Log.w(TAG, "authenticate/begin failed: " + describeNetworkError(error))
+                appendLog(getString(R.string.log_server_offline))
             }
 
             promptForFingerprint()
@@ -335,7 +360,7 @@ class AuthenticationFragment : Fragment() {
                     result: BiometricPrompt.AuthenticationResult
                 ) {
                     val assertion = signAssertion(result.cryptoObject?.signature)
-                    appendLog("2 - fingerprint : PASS")
+                    appendLog(getString(R.string.log_fingerprint_pass))
                     if (tier.requiresEnhanced) {
                         beginEnhancedVerification(assertion)
                     } else {
@@ -348,7 +373,7 @@ class AuthenticationFragment : Fragment() {
                 }
 
                 override fun onAuthenticationFailed() {
-                    appendLog("2 - fingerprint : no match, try again")
+                    appendLog(getString(R.string.log_fingerprint_fail))
                 }
             },
         )
@@ -393,7 +418,7 @@ class AuthenticationFragment : Fragment() {
                 override fun onAuthenticationSucceeded(
                     result: BiometricPrompt.AuthenticationResult
                 ) {
-                    appendLog("3 - enhanced    : PASS")
+                    appendLog(getString(R.string.log_enhanced_pass))
                     completeWithBackend(assertion)
                 }
 
@@ -423,12 +448,15 @@ class AuthenticationFragment : Fragment() {
      */
     private fun completeWithBackend(assertion: String) {
         if (!backendOnline || serverChallengeId == null) {
+            // No challenge was ever issued, so there is nothing the server can
+            // verify. Keep the banner up for the whole screen.
+            setOfflineBanner(true)
             finish(true, "Verified on device (backend unreachable)", assertion)
             return
         }
 
         binding.livenessProgress.visibility = View.VISIBLE
-        appendLog("4 - submitting to backend...")
+        appendLog(getString(R.string.log_sending))
 
         viewLifecycleOwner.lifecycleScope.launch {
             val outcome = withContext(Dispatchers.IO) {
@@ -450,18 +478,25 @@ class AuthenticationFragment : Fragment() {
             binding.livenessProgress.visibility = View.GONE
 
             outcome.onSuccess { response ->
-                appendLog("   backend       : " + response.verdict +
-                    " (txn " + response.transactionId.take(8) + ")")
-                finish(true, "Verified by backend", assertion)
+                Log.i(TAG, "server transaction " + response.transactionId)
+                appendLog(getString(R.string.log_server_confirmed))
+                finish(true, "Verified by backend", assertion, response.transactionId)
             }.onFailure { error ->
                 if (error is HttpException) {
+                    // An HTTP error means the server actively refused. That is a
+                    // rejection, not an outage, so the banner stays down.
                     val reason = extractServerReason(error)
                         ?: "backend rejected the assertion"
-                    appendLog("   backend       : REJECTED - " + reason)
+                    appendLog(getString(R.string.log_server_declined, reason))
                     finish(false, reason, assertion)
                 } else {
-                    appendLog("   backend       : unreachable (" +
-                        describeNetworkError(error) + ")")
+                    // Transport failure: we could not ask, so fall back to the
+                    // local verdict and say so.
+                    backendOnline = false
+                    setOfflineBanner(true)
+                    Log.w(TAG, "authenticate/complete failed: " +
+                        describeNetworkError(error))
+                    appendLog(getString(R.string.log_server_unreachable))
                     finish(true, "Verified on device (backend unreachable)", assertion)
                 }
             }
@@ -470,7 +505,12 @@ class AuthenticationFragment : Fragment() {
 
     // ---------------------------------------------------------------- verdict
 
-    private fun finish(requestedApproval: Boolean, requestedReason: String, assertion: String) {
+    private fun finish(
+        requestedApproval: Boolean,
+        requestedReason: String,
+        assertion: String,
+        serverTransactionId: String? = null,
+    ) {
         if (terminal) return
         // Biometric callbacks can land after the view is gone (rotation, back).
         val binding = _binding ?: return
@@ -500,6 +540,7 @@ class AuthenticationFragment : Fragment() {
                 livenessEnforced = tier.requiresLiveness,
                 reason = reason,
                 signaturePreview = assertion.take(24),
+                serverTransactionId = serverTransactionId,
             )
         )
 
@@ -519,9 +560,13 @@ class AuthenticationFragment : Fragment() {
         } else {
             reason
         }
-        binding.resultSignature.visibility =
-            if (approved && assertion.isNotBlank()) View.VISIBLE else View.GONE
-        binding.resultSignature.text = "assertion ${assertion.take(28)}…"
+        // Only claim a signature when one was actually produced. The Keystore
+        // falls back to an ungated key on some devices, and signAssertion then
+        // returns a "(...)" placeholder — asserting "digitally signed" there
+        // would be untrue in front of a study participant.
+        val reallySigned = approved && assertion.isNotBlank() && !assertion.startsWith("(")
+        binding.resultSignature.visibility = if (reallySigned) View.VISIBLE else View.GONE
+        binding.resultSignature.text = getString(R.string.signed_verified)
 
         binding.simulateAttackSwitch.isEnabled = false
         binding.primaryButton.isEnabled = true
@@ -529,7 +574,13 @@ class AuthenticationFragment : Fragment() {
         binding.secondaryButton.visibility = if (approved) View.GONE else View.VISIBLE
         binding.secondaryButton.text = getString(R.string.btn_retry)
 
-        appendLog(if (approved) "verdict : AUTHORISED" else "verdict : REJECTED — $reason")
+        // The server transaction id is deliberately NOT shown here — it is a
+        // reconciliation handle, kept on the stored record and in the history
+        // list rather than put in front of a study participant.
+        appendLog(
+            if (approved) getString(R.string.log_verdict_approved)
+            else getString(R.string.log_verdict_blocked) + " - " + reason
+        )
     }
 
     /**
@@ -538,6 +589,18 @@ class AuthenticationFragment : Fragment() {
      * a Back press), which would otherwise throw because the action is no longer
      * valid once the destination has changed.
      */
+    /**
+     * Shows or hides the amber offline banner.
+     *
+     * Driven only by an actual call failure, never by a guess — the app should
+     * not claim to be offline before it has tried. Once raised it stays up for
+     * the rest of the screen, since a later call succeeding does not change the
+     * fact that this authorisation was settled without the server.
+     */
+    private fun setOfflineBanner(visible: Boolean) {
+        _binding?.offlineBanner?.visibility = if (visible) View.VISIBLE else View.GONE
+    }
+
     private fun goHome() {
         val nav = findNavController()
         if (nav.currentDestination?.id == R.id.authenticationFragment) {

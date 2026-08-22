@@ -52,6 +52,15 @@ class TransactionAdapter(
                     append(" · ")
                     append(tx.reason)
                 }
+                // Distinguishes a server-verified payment from one settled on
+                // device while the backend was unreachable, and carries the id
+                // needed to reconcile this row against the server's audit trail.
+                if (tx.isServerVerified) {
+                    append("\n↑ server ")
+                    append(tx.serverTransactionId?.take(8))
+                } else if (tx.approved) {
+                    append("\n○ offline — not server-verified")
+                }
             }
             verdictText.text = if (tx.approved) "AUTHORISED" else "REJECTED"
             verdictText.setTextColor(colour)
