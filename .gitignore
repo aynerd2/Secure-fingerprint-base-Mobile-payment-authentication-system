@@ -1,0 +1,76 @@
+# ===========================================================================
+#  SFMPAS — files that must never reach the repository
+# ===========================================================================
+
+# --- Dataset -------------------------------------------------------------
+# SOCOFing is ~55,000 BMP images (~700 MB) and is redistributed under its own
+# licence. See the Dataset section of README.md for how to obtain it.
+fgpdataset/
+
+# --- Preprocessing caches ------------------------------------------------
+# Each of these is a 1.2 GB memory-mapped array, well over GitHub's 100 MB
+# per-file hard limit. They are regenerated automatically by train_pad.py.
+cache/
+*.npy
+
+# --- Training artefacts --------------------------------------------------
+# Keras checkpoints are ~12 MB each and are reproducible from train_pad.py.
+# The deployable model (sfmpas_pad.tflite, 1.95 MB) IS committed — see below.
+outputs/**/*.keras
+outputs/**/*.log
+outputs/**/training_log.csv
+outputs/**/test_scores.npz
+
+# --- Python --------------------------------------------------------------
+tfenv/
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# --- Android / Gradle ----------------------------------------------------
+SFMPASApp/.gradle/
+SFMPASApp/build/
+SFMPASApp/app/build/
+SFMPASApp/local.properties
+SFMPASApp/.idea/
+*.iml
+*.apk
+*.aab
+*.keystore
+*.jks
+
+# --- Secrets -------------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets.json
+
+# --- Editors / OS --------------------------------------------------------
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Working files -------------------------------------------------------
+*.tmp
+*.bak
+scratch/
+
+# ===========================================================================
+#  Deliberately COMMITTED despite the rules above:
+#    sfmpas_pad.tflite                      (1.95 MB — the deployable model)
+#    SFMPASApp/app/src/main/assets/*        (model + PAD self-test fixtures)
+#    outputs/**/metrics.json                (small; the published results)
+#    outputs/**/*.png                       (training / evaluation figures)
+# ===========================================================================
+!sfmpas_pad.tflite
+!SFMPASApp/app/src/main/assets/**
+!outputs/**/metrics.json
+!outputs/**/*.png

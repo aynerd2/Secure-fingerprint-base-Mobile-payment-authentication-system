@@ -1,0 +1,70 @@
+{
+  "operating_points": {
+    "bpcer_at_apcer_1pct": {
+      "value": 0.0016666666666667052,
+      "threshold": 0.9005682468414307
+    },
+    "apcer_at_bpcer_1pct": {
+      "value": 0.00377256804095931,
+      "threshold": 0.9853582382202148
+    },
+    "bpcer_at_apcer_5pct": {
+      "value": 0.0,
+      "threshold": 0.01809486374258995
+    },
+    "apcer_at_bpcer_5pct": {
+      "value": 0.0016168148746968471,
+      "threshold": 0.9994567036628723
+    },
+    "bpcer_at_apcer_10pct": {
+      "value": 0.0,
+      "threshold": 0.01809486374258995
+    },
+    "apcer_at_bpcer_10pct": {
+      "value": 0.0013473457289140394,
+      "threshold": 0.9995569586753845
+    }
+  },
+  "at_eer_threshold": {
+    "threshold": 0.96770179271698,
+    "apcer": 0.004580975478307734,
+    "bpcer": 0.005,
+    "accuracy": 0.9953166361229893,
+    "acer": 0.004790487739153867
+  },
+  "threshold": 0.5,
+  "accuracy": 0.9930767664426797,
+  "apcer": 0.008623012665049851,
+  "bpcer": 0.0016666666666666668,
+  "acer": 0.005144839665858259,
+  "apcer_max_pai": 0.0224,
+  "apcer_per_difficulty": {
+    "Altered-Easy": 0.0224,
+    "Altered-Medium": 0.001669449081803005,
+    "Altered-Hard": 0.001583531274742676
+  },
+  "apcer_per_alteration": {
+    "CR": 0.006509357200976403,
+    "Obl": 0.0,
+    "Zcut": 0.021998166819431713
+  },
+  "roc_auc": 0.9995781685080392,
+  "eer": 0.00479048773915387,
+  "eer_threshold": 0.96770179271698,
+  "confusion": [
+    [
+      3679,
+      32
+    ],
+    [
+      2,
+      1198
+    ]
+  ],
+  "n_attack": 3711,
+  "n_bonafide": 1200,
+  "epochs_run": 19,
+  "note": "run interrupted at epoch 19 of 50; metrics computed from the best_checkpoint.keras weights (best val_auc), which is what EarlyStopping would have restored",
+  "split": "subject",
+  "gabor": false
+}

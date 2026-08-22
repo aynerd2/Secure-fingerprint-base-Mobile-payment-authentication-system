@@ -1,0 +1,71 @@
+<resources>
+    <string name="app_name">SFMPAS</string>
+
+    <!-- Screen titles -->
+    <string name="title_registration">Registration</string>
+    <string name="title_home">SFMPAS</string>
+    <string name="title_payment">Make Payment</string>
+    <string name="title_authentication">Authentication</string>
+    <string name="title_self_test">PAD Self-Test</string>
+
+    <!-- Registration -->
+    <string name="reg_heading">Create your SFMPAS account</string>
+    <string name="reg_sub">Your fingerprint template and private key never leave this device.</string>
+    <string name="hint_full_name">Full name</string>
+    <string name="hint_phone">Phone number</string>
+    <string name="label_occupation">Occupation type</string>
+    <string name="occupation_general">General User</string>
+    <string name="occupation_manual">Manual Labour Worker</string>
+    <string name="occupation_manual_note">Manual labour can wear down ridge detail, so worn-print tolerance is applied at authentication.</string>
+    <string name="btn_register_fingerprint">Register Fingerprint</string>
+
+    <!-- Home -->
+    <string name="home_welcome">Welcome, %1$s</string>
+    <string name="home_tier_label">Account tier</string>
+    <string name="home_balance_label">Available balance</string>
+    <string name="btn_make_payment">Make Payment</string>
+    <string name="btn_transaction_history">Transaction History</string>
+    <string name="btn_self_test">Run PAD self-test</string>
+    <string name="btn_reset_balance">Reset Balance (testing)</string>
+    <string name="balance_reset_done">Balance reset to %1$s</string>
+    <string name="balance_empty">Balance exhausted. Use Reset Balance on the Home screen to restore the test float.</string>
+    <string name="no_transactions">No transactions yet.</string>
+
+    <!-- Payment -->
+    <string name="hint_amount">Amount (₦)</string>
+    <string name="hint_recipient">Recipient name</string>
+    <string name="btn_proceed_auth">Proceed to Authentication</string>
+    <string name="cbn_tier_heading">CBN KYC requirement</string>
+    <string name="tier_range_1">Below ₦50,000</string>
+    <string name="tier_range_2">₦50,000 – ₦200,000</string>
+    <string name="tier_range_3">Above ₦200,000</string>
+    <string name="balance_hint">Available balance %1$s</string>
+    <string name="err_amount_required">Enter an amount</string>
+    <string name="err_amount_positive">Amount must be greater than zero</string>
+    <string name="err_amount_balance">Amount exceeds your available balance</string>
+    <string name="err_insufficient_funds">Insufficient funds — available %1$s</string>
+    <string name="err_recipient_required">Enter a recipient name</string>
+    <string name="tier_prompt">Enter an amount to see which CBN KYC tier applies.</string>
+
+    <!-- Authentication -->
+    <string name="auth_step_liveness">1 · Presentation attack detection</string>
+    <string name="auth_step_fingerprint">2 · Fingerprint verification</string>
+    <string name="auth_step_enhanced">3 · Enhanced verification</string>
+    <string name="btn_authorise">Authorise Payment</string>
+    <string name="btn_done">Done</string>
+    <string name="btn_retry">Try Again</string>
+    <string name="simulate_attack">Simulate presentation attack</string>
+    <string name="simulate_attack_help">Feeds the altered (Z-cut) reference print instead of the genuine one, so the rejection path can be demonstrated.</string>
+
+    <string name="print_preview_desc">Captured fingerprint used for the liveness check</string>
+    <string name="liveness_running">Running presentation attack detection…</string>
+    <string name="enforced_at">Enforced at %1$s</string>
+    <string name="not_enforced_tier1">Informational at Tier 1 — not enforced</string>
+    <string name="verdict_genuine">GENUINE</string>
+    <string name="verdict_attack">ATTACK</string>
+    <string name="payment_authorised">Payment Authorised</string>
+    <string name="payment_rejected">Payment Rejected</string>
+    <string name="self_test_blurb">Compares the on-device CLAHE + bicubic pipeline and the TFLite model against reference values produced by the Python training pipeline.</string>
+    <string name="btn_run_self_test">Run self-test</string>
+    <string name="status_idle">Model not yet loaded.</string>
+</resources>

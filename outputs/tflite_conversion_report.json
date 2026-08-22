@@ -1,0 +1,73 @@
+{
+  "model": "sfmpas_pad.tflite",
+  "quantization": "float16 (weights fp16, float32 I/O)",
+  "bytes": 1953572,
+  "input": {
+    "name": "serving_default_gabor_input:0",
+    "shape": [
+      47,
+      224,
+      224,
+      3
+    ],
+    "dtype": "float32",
+    "value_range": "0.0-255.0",
+    "preprocessing": "grayscale -> CLAHE(clip=2.0, tiles=8x8) -> resize 224x224 bicubic -> replicate to 3 channels"
+  },
+  "output": {
+    "name": "StatefulPartitionedCall_1:0",
+    "shape": [
+      47,
+      1
+    ],
+    "dtype": "float32",
+    "meaning": "liveness score in [0,1]; >= threshold => genuine/live"
+  },
+  "threshold_default": 0.5,
+  "metrics_thr_0.5": {
+    "apcer": 0.00889248181083266,
+    "bpcer": 0.0016666666666666668,
+    "acer": 0.005279574238749664,
+    "accuracy": 0.992873141926288,
+    "roc_auc": 0.9995800772478218,
+    "eer": 0.004239086499595789
+  },
+  "apcer_per_difficulty": {
+    "Altered-Easy": 0.0232,
+    "Altered-Medium": 0.001669449081803005,
+    "Altered-Hard": 0.001583531274742676
+  },
+  "apcer_per_alteration": {
+    "CR": 0.007323026851098454,
+    "Obl": 0.0,
+    "Zcut": 0.021998166819431713
+  },
+  "eer_threshold": 0.9683276414871216,
+  "operating_points": {
+    "bpcer_at_apcer_1pct": {
+      "value": 0.0016666666666667052,
+      "threshold": 0.904115617275238
+    },
+    "apcer_at_bpcer_1pct": {
+      "value": 0.00377256804095931,
+      "threshold": 0.9791318774223328
+    },
+    "bpcer_at_apcer_5pct": {
+      "value": 0.0,
+      "threshold": 0.0174639243632555
+    },
+    "apcer_at_bpcer_5pct": {
+      "value": 0.0016168148746968471,
+      "threshold": 0.999401330947876
+    },
+    "bpcer_at_apcer_10pct": {
+      "value": 0.0,
+      "threshold": 0.0174639243632555
+    },
+    "apcer_at_bpcer_10pct": {
+      "value": 0.0013473457289140394,
+      "threshold": 0.9995799660682678
+    }
+  },
+  "test_set": "4911 images, 120 subjects disjoint from training"
+}

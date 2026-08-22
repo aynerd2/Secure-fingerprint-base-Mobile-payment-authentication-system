@@ -1,0 +1,48 @@
+# Render Blueprint for SFMPAS.
+#
+# Defines both services so one "Apply" creates the API and its database and
+# wires DATABASE_URL between them. Point Render's Blueprint page at the repo
+# containing this file.
+#
+# Free-tier caveats worth knowing before a user study — see README.md:
+#   * the web service sleeps after ~15 minutes idle; the next request pays a
+#     ~50 second cold start
+#   * free PostgreSQL instances expire and are deleted after 30 days
+
+services:
+  - type: web
+    name: sfmpas-backend
+    runtime: python
+    plan: free
+    region: frankfurt          # closest free region to Nigeria/UK; must match the DB
+    branch: main
+    # rootDir only matters if the repo root is above this folder. If you push
+    # sfmpas-backend itself as the repo root, delete this line.
+    rootDir: sfmpas-backend
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    # Bind the port Render assigns. Hard-coding 10000 works today because that is
+    # Render's default, but $PORT is authoritative and survives a change.
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      # Injected by Render from the database below — do not set this by hand.
+      - key: DATABASE_URL
+        fromDatabase:
+          name: sfmpas-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true          # Render generates a strong random value
+      - key: CHALLENGE_TTL_SECONDS
+        value: "300"
+      - key: APPLY_SCHEMA_ON_STARTUP
+        value: "true"
+      - key: PYTHON_VERSION
+        value: "3.12.6"
+
+databases:
+  - name: sfmpas-db
+    plan: free
+    region: frankfurt          # must match the web service's region
+    databaseName: sfmpas
+    user: sfmpas

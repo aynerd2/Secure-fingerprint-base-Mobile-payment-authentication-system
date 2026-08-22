@@ -1,0 +1,90 @@
+{
+  "operating_points": {
+    "bpcer_at_apcer_1pct": {
+      "value": 0.6358333333333333,
+      "threshold": 0.9983064532279968
+    },
+    "apcer_at_bpcer_1pct": {
+      "value": 0.30234438156831045,
+      "threshold": 8.013202022993937e-05
+    },
+    "bpcer_at_apcer_5pct": {
+      "value": 0.23083333333333333,
+      "threshold": 0.9219866991043091
+    },
+    "apcer_at_bpcer_5pct": {
+      "value": 0.14227970897332257,
+      "threshold": 0.07706615328788757
+    },
+    "bpcer_at_apcer_10pct": {
+      "value": 0.09666666666666668,
+      "threshold": 0.43492528796195984
+    },
+    "apcer_at_bpcer_10pct": {
+      "value": 0.09673942333602803,
+      "threshold": 0.47817927598953247
+    }
+  },
+  "at_eer_threshold": {
+    "threshold": 0.4407494366168976,
+    "apcer": 0.0997035839396389,
+    "bpcer": 0.1,
+    "accuracy": 0.900223986968031,
+    "acer": 0.09985179196981946
+  },
+  "threshold": 0.5,
+  "accuracy": 0.903685603746691,
+  "apcer": 0.09404473187819995,
+  "bpcer": 0.10333333333333333,
+  "acer": 0.09868903260576664,
+  "apcer_max_pai": 0.2232,
+  "apcer_per_difficulty": {
+    "Altered-Easy": 0.2232,
+    "Altered-Medium": 0.0333889816360601,
+    "Altered-Hard": 0.023752969121140142
+  },
+  "apcer_per_alteration": {
+    "CR": 0.05370219690805533,
+    "Obl": 0.0301941049604601,
+    "Zcut": 0.22089825847846012
+  },
+  "roc_auc": 0.9616079448486481,
+  "eer": 0.09985179196981944,
+  "eer_threshold": 0.4407494366168976,
+  "confusion": [
+    [
+      3362,
+      349
+    ],
+    [
+      124,
+      1076
+    ]
+  ],
+  "n_attack": 3711,
+  "n_bonafide": 1200,
+  "config": {
+    "epochs": 50,
+    "batch_size": 32,
+    "lr": 0.0001,
+    "fakes_per_subfolder": 6000,
+    "test_size": 0.2,
+    "val_size": 0.1,
+    "split": "subject",
+    "patience": 10,
+    "monitor": "val_auc",
+    "threshold": 0.5,
+    "augment": false,
+    "real_weight_boost": 1.0,
+    "limit": 0,
+    "tag": "run",
+    "gabor": true,
+    "out_subdir": "subject_disjoint"
+  },
+  "epochs_run": 24,
+  "wall_clock_min": 99.23004533449809,
+  "class_weight": {
+    "0": 0.6671309192200557,
+    "1": 1.9958333333333333
+  }
+}

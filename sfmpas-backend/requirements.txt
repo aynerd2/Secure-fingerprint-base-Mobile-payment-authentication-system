@@ -1,0 +1,26 @@
+# SFMPAS backend dependencies
+#
+# Pinned to compatible ranges rather than exact versions so a fresh install on a
+# different machine still resolves; tighten to == before submission if you need
+# byte-identical reproducibility.
+
+# --- web framework -----------------------------------------------------------
+fastapi>=0.115,<1.0
+uvicorn[standard]>=0.30,<1.0
+pydantic>=2.7,<3.0
+
+# --- database ----------------------------------------------------------------
+# PostgreSQL (Render's free managed database). The -binary wheel ships its own
+# libpq, so no system packages are needed in Render's build image.
+psycopg2-binary>=2.9.9,<3.0
+
+# --- cryptography ------------------------------------------------------------
+# Verifies the SHA256withECDSA assertions produced by Android Keystore.
+cryptography>=42.0
+
+# --- tokens ------------------------------------------------------------------
+# Signs the short-lived transaction receipt returned by /authenticate/complete.
+python-jose[cryptography]>=3.3,<4.0
+
+# --- test script -------------------------------------------------------------
+requests>=2.31,<3.0

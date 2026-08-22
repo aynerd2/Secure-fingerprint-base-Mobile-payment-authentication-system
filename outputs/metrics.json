@@ -1,0 +1,88 @@
+{
+  "operating_points": {
+    "bpcer_at_apcer_1pct": {
+      "value": 0.7758333333333334,
+      "threshold": 0.9998037219047546
+    },
+    "apcer_at_bpcer_1pct": {
+      "value": 0.29388888888888887,
+      "threshold": 0.0013857780722901225
+    },
+    "bpcer_at_apcer_5pct": {
+      "value": 0.4091666666666667,
+      "threshold": 0.9902623295783997
+    },
+    "apcer_at_bpcer_5pct": {
+      "value": 0.18666666666666668,
+      "threshold": 0.1294245570898056
+    },
+    "bpcer_at_apcer_10pct": {
+      "value": 0.18833333333333335,
+      "threshold": 0.8762691617012024
+    },
+    "apcer_at_bpcer_10pct": {
+      "value": 0.1461111111111111,
+      "threshold": 0.513374924659729
+    }
+  },
+  "at_eer_threshold": {
+    "threshold": 0.6896319389343262,
+    "apcer": 0.12916666666666668,
+    "bpcer": 0.12916666666666668,
+    "accuracy": 0.8708333333333333,
+    "acer": 0.12916666666666668
+  },
+  "threshold": 0.5,
+  "accuracy": 0.865,
+  "apcer": 0.14722222222222223,
+  "bpcer": 0.09833333333333333,
+  "acer": 0.12277777777777778,
+  "apcer_max_pai": 0.3324720068906115,
+  "apcer_per_difficulty": {
+    "Altered-Easy": 0.3324720068906115,
+    "Altered-Medium": 0.06907894736842106,
+    "Altered-Hard": 0.04905968928863451
+  },
+  "apcer_per_alteration": {
+    "CR": 0.09137055837563451,
+    "Obl": 0.05457227138643068,
+    "Zcut": 0.327683615819209
+  },
+  "roc_auc": 0.9409932870370372,
+  "eer": 0.12916666666666665,
+  "eer_threshold": 0.6896319389343262,
+  "confusion": [
+    [
+      3070,
+      530
+    ],
+    [
+      118,
+      1082
+    ]
+  ],
+  "n_attack": 3600,
+  "n_bonafide": 1200,
+  "config": {
+    "epochs": 50,
+    "batch_size": 32,
+    "lr": 0.0001,
+    "fakes_per_subfolder": 6000,
+    "test_size": 0.2,
+    "val_size": 0.1,
+    "split": "stratified",
+    "patience": 10,
+    "monitor": "val_auc",
+    "threshold": 0.5,
+    "augment": false,
+    "real_weight_boost": 1.0,
+    "limit": 0,
+    "tag": "run"
+  },
+  "epochs_run": 24,
+  "wall_clock_min": 100.1059191385905,
+  "class_weight": {
+    "0": 0.6666666666666666,
+    "1": 2.0
+  }
+}

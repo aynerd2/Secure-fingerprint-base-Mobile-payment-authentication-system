@@ -1,0 +1,28 @@
+{
+  "model": "sfmpas_pad.tflite",
+  "input_size": 224,
+  "samples": [
+    {
+      "index": 0,
+      "label": "genuine",
+      "source": "100__M_Left_index_finger.BMP",
+      "width": 96,
+      "height": 103,
+      "input_file": "selftest_0_input.raw",
+      "expected_file": "selftest_0_expected.raw",
+      "expected_score": 0.9999999403953552,
+      "expected_genuine": true
+    },
+    {
+      "index": 1,
+      "label": "attack_zcut",
+      "source": "100__M_Left_index_finger_Zcut.BMP",
+      "width": 96,
+      "height": 103,
+      "input_file": "selftest_1_input.raw",
+      "expected_file": "selftest_1_expected.raw",
+      "expected_score": 1.5856485333642922e-05,
+      "expected_genuine": false
+    }
+  ]
+}

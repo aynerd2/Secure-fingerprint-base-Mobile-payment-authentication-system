@@ -1,0 +1,90 @@
+{
+  "operating_points": {
+    "bpcer_at_apcer_1pct": {
+      "value": 0.004166666666666652,
+      "threshold": 0.041060108691453934
+    },
+    "apcer_at_bpcer_1pct": {
+      "value": 0.005,
+      "threshold": 0.7020571231842041
+    },
+    "bpcer_at_apcer_5pct": {
+      "value": 0.0016666666666667052,
+      "threshold": 0.010042035020887852
+    },
+    "apcer_at_bpcer_5pct": {
+      "value": 0.0016666666666666668,
+      "threshold": 0.9956995844841003
+    },
+    "bpcer_at_apcer_10pct": {
+      "value": 0.0008333333333333526,
+      "threshold": 0.00013155258784536272
+    },
+    "apcer_at_bpcer_10pct": {
+      "value": 0.0011111111111111111,
+      "threshold": 0.9988657236099243
+    }
+  },
+  "at_eer_threshold": {
+    "threshold": 0.4210929572582245,
+    "apcer": 0.006944444444444444,
+    "bpcer": 0.0075,
+    "accuracy": 0.9929166666666667,
+    "acer": 0.007222222222222222
+  },
+  "threshold": 0.5,
+  "accuracy": 0.9935416666666667,
+  "apcer": 0.006111111111111111,
+  "bpcer": 0.0075,
+  "acer": 0.006805555555555556,
+  "apcer_max_pai": 0.012058570198105082,
+  "apcer_per_difficulty": {
+    "Altered-Easy": 0.012058570198105082,
+    "Altered-Medium": 0.003289473684210526,
+    "Altered-Hard": 0.003270645952575634
+  },
+  "apcer_per_alteration": {
+    "CR": 0.005076142131979695,
+    "Obl": 0.0007374631268436578,
+    "Zcut": 0.014124293785310734
+  },
+  "roc_auc": 0.9993302083333333,
+  "eer": 0.007222222222222198,
+  "eer_threshold": 0.4210929572582245,
+  "confusion": [
+    [
+      3578,
+      22
+    ],
+    [
+      9,
+      1191
+    ]
+  ],
+  "n_attack": 3600,
+  "n_bonafide": 1200,
+  "config": {
+    "epochs": 50,
+    "batch_size": 32,
+    "lr": 0.0001,
+    "fakes_per_subfolder": 6000,
+    "test_size": 0.2,
+    "val_size": 0.1,
+    "split": "stratified",
+    "patience": 10,
+    "monitor": "val_auc",
+    "threshold": 0.5,
+    "augment": false,
+    "real_weight_boost": 1.0,
+    "limit": 0,
+    "tag": "run",
+    "gabor": false,
+    "out_subdir": "ablation_clahe"
+  },
+  "epochs_run": 25,
+  "wall_clock_min": 52.32980558872223,
+  "class_weight": {
+    "0": 0.6666666666666666,
+    "1": 2.0
+  }
+}
