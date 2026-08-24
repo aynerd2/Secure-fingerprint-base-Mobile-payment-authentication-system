@@ -74,3 +74,4 @@ scratch/
 !SFMPASApp/app/src/main/assets/**
 !outputs/**/metrics.json
 !outputs/**/*.png
+
